@@ -17,10 +17,41 @@ public class InputMgr : AComponent {
         }
     }
 
-    protected class TReturnData {
-        public AComponent component;
-        public ReturnDelegate retDel;
-        public int n;
+    protected class TkeyDelegateData {
+        public AComponent component {
+            get; private set;
+        }
+        private Dictionary<KeyCode, keyDelegate> keyDelegateMap;
+        public int n {
+            get; private set;
+        }
+
+        public TkeyDelegateData(AComponent component, KeyCode kCode, keyDelegate firstDel) {
+            this.component = component;
+            keyDelegateMap = new Dictionary<KeyCode, keyDelegate>();
+            keyDelegateMap.Add(kCode, firstDel);
+        }
+
+        public void addDelegate(KeyCode kCode, keyDelegate kDel) {
+            //if (keyDelegateMap.ContainsKey(kCode)) {
+            //    keyDelegateMap[kCode] += kDel;
+            //} else {
+            //    keyDelegateMap[kCode]
+            //}
+            keyDelegateMap[kCode] += kDel;
+            n++;
+        }
+
+        public void removeDelegate(KeyCode kCode, keyDelegate kDel) {
+            keyDelegateMap[kCode] -= kDel;
+            n--;
+        }
+
+        public void fillDelegates(KeyCode kCode, keyDelegate callback) {
+            if (keyDelegateMap[kCode] != null) {
+                callback += keyDelegateMap[kCode];
+            }
+        }
     }
 
     //public enum TMouseButtonID { LEFT = 0, RIGHT = 1 };
@@ -30,14 +61,15 @@ public class InputMgr : AComponent {
 
     private InputController inputCtrl;
 
-    public delegate void ClickEvent(TargetClick targetClick);
-    protected ClickEvent clickBegin;
-    protected ClickEvent clickPressed;
-    protected ClickEvent clickEnd;
+    public delegate void ClickDelegate(TargetClick targetClick);
+    protected ClickDelegate clickBegin;
+    protected ClickDelegate clickPressed;
+    protected ClickDelegate clickEnd;
     private TargetClick targetClick;
 
-    public delegate void ReturnDelegate();
-    protected Dictionary<int, TReturnData> retDelMap = new Dictionary<int, TReturnData>();
+    //public delegate void ReturnDelegate();
+    public delegate void keyDelegate();
+    protected Dictionary<int, TkeyDelegateData> delegateMap;
     //protected Dictionary<int, AComponent> retDelGoMap = new Dictionary<int, AComponent>();
 
     #region MAIN
@@ -45,6 +77,8 @@ public class InputMgr : AComponent {
     protected override void Awake() {
         base.Awake();
         inputCtrl = new InputController(true);
+
+            delegateMap = new Dictionary<int, TkeyDelegateData>();
     }
 
     protected override void Start() {
@@ -55,59 +89,55 @@ public class InputMgr : AComponent {
     protected override void Update() {
         base.Update();
         OnClick();
-        OnReturn();
+        OnKey();
     }
 
     #endregion MAIN
 
     #region RETURN
 
-    public void RegisterReturn(AComponent component, ReturnDelegate retDel) {
-        if (retDelMap.ContainsKey(component.GetID())) {
-            retDelMap[component.GetID()].component = component;
-            retDelMap[component.GetID()].retDel += retDel;
-            retDelMap[component.GetID()].n++;
+    public void RegisterKeyDelegate(AComponent component, KeyCode kCode, keyDelegate kDel) {
+        if (delegateMap.ContainsKey(component.GetID())) {
+                delegateMap[component.GetID()].addDelegate(kCode, kDel);
         } else {
-            TReturnData data = new TReturnData();
-            data.component = component;
-            data.retDel += retDel;
-            data.n = 1;
-            retDelMap.Add(component.GetID(), data);
+                delegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
         }
     }
 
-    public void UnRegisterReturn(AComponent component, ReturnDelegate retDel) {
-        if (retDelMap.ContainsKey(component.GetID())) {
-            retDelMap[component.GetID()].component = component;
-            retDelMap[component.GetID()].retDel -= retDel;
-            retDelMap[component.GetID()].n--;
-
-            if (retDelMap[component.GetID()].n <= 0) {
-                retDelMap.Remove(component.GetID());
+    public void UnRegisterKeyDelegate(AComponent component, KeyCode kCode, keyDelegate kDel) {
+        if (delegateMap.ContainsKey(component.GetID())) {
+            delegateMap[component.GetID()].removeDelegate(kCode, kDel);
+            if (delegateMap[component.GetID()].n <= 0) {
+                delegateMap.Remove(component.GetID());
             }
         }
     }
 
-    public void ReturnCallback() {
-        ReturnDelegate callback = null;
-        foreach (TReturnData data in retDelMap.Values) {
-            if (data.retDel != null && data.component.gameObject.activeInHierarchy)
-                callback += data.retDel;
+    public void KeyDelegateCB(Dictionary<KeyCode, bool> activeKeys) {
+        keyDelegate callback = null;
+        foreach (KeyValuePair<KeyCode, bool> keyData in activeKeys) {
+            if (keyData.Value) {
+                foreach (KeyValuePair<int, TkeyDelegateData> data in delegateMap) {
+                    if (data.Value.component.gameObject.activeInHierarchy) {
+                        data.Value.fillDelegates(keyData.Key, callback);
+                    }
+                }
+            }
         }
         if (callback != null)
             callback();
     }
 
-    protected void OnReturn() {
-        if (Input.GetKeyDown(inputCtrl.keys.BACK))
-            ReturnCallback();
+    protected void OnKey() {
+        Dictionary<KeyCode, bool> activeKeys = inputCtrl.getActiveKeys();
+        KeyDelegateCB(activeKeys);
     }
 
     #endregion
 
     #region CLICK
 
-    public void RegisterClickEvent(ClickEvent begin, ClickEvent end, ClickEvent pressed) {
+    public void RegisterClickEvent(ClickDelegate begin, ClickDelegate end, ClickDelegate pressed) {
         if (begin != null)
             clickBegin += begin;
 
@@ -118,7 +148,7 @@ public class InputMgr : AComponent {
             clickPressed += pressed;
     }
 
-    public void UnRegisterClickEvent(ClickEvent begin, ClickEvent end, ClickEvent pressed) {
+    public void UnRegisterClickEvent(ClickDelegate begin, ClickDelegate end, ClickDelegate pressed) {
         if (begin != null)
             clickBegin -= begin;
 
