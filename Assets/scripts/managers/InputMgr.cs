@@ -41,7 +41,7 @@ public class InputMgr : AComponent {
     //protected Dictionary<int, AComponent> retDelGoMap = new Dictionary<int, AComponent>();
 
     #region MAIN
-
+    
     protected override void Awake() {
         base.Awake();
         inputCtrl = new InputController(true);
@@ -148,7 +148,7 @@ public class InputMgr : AComponent {
         bool isCollision = false;
         Camera[] cameras = Camera.allCameras;
 
-        int i = cameras.Length;
+        int i = cameras.Length - 1;
         while (!isCollision && i >= 0) {
             isCollision = ThrowRay(cameras[i], mousePosition, begin);
             i--;

@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour
-{
+public class Player : AComponent {
 
-    public int speed;
+    public float speed = 6f;
     public float friction;
     public float lerpSpeed;
     public float xDeg;
@@ -12,13 +11,25 @@ public class Player : MonoBehaviour
     private Quaternion fromRotation;
     private Quaternion toRotation;
 
-    void Start()
-    {
+    private Vector3 movement;
 
+    protected override void Awake() {
+        base.Awake();
+        GameMgr.GetInstance().GetServer<InputMgr>().RegisterReturn(this, back);
     }
-    
-    void Update()
-    {
 
+    public void back() {
+        Debug.Log("Back pressed");
+        //movement.Set(h, 0f, v);
+        //movement = movement.normalized * speed * Time.deltaTime;
+        //playerRigidbody.MovePosition(transform.position + movement);
+    }
+
+    protected override void Start() {
+        base.Start();
+    }
+
+    protected override void Update() {
+        base.Update();
     }
 }
