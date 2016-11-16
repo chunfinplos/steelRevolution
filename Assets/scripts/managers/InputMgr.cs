@@ -47,8 +47,8 @@ public class InputMgr : AComponent {
             n--;
         }
 
-        public void fillDelegates(KeyCode kCode, keyDelegate callback) {
-            if (keyDelegateMap[kCode] != null) {
+        public void fillDelegates(KeyCode kCode, ref keyDelegate callback) {
+            if (keyDelegateMap.ContainsKey(kCode)) {
                 callback += keyDelegateMap[kCode];
             }
         }
@@ -59,7 +59,9 @@ public class InputMgr : AComponent {
 
     //protected enum TButtonEvent { BEGIN, PRESSED, END, BEGIN_OVER, END_OVER };
 
-    private InputController inputCtrl;
+    public InputController inputCtrl {
+        get; private set;
+    }
 
     public delegate void ClickDelegate(TargetClick targetClick);
     protected ClickDelegate clickBegin;
@@ -78,7 +80,7 @@ public class InputMgr : AComponent {
         base.Awake();
         inputCtrl = new InputController(true);
 
-            delegateMap = new Dictionary<int, TkeyDelegateData>();
+        delegateMap = new Dictionary<int, TkeyDelegateData>();
     }
 
     protected override void Start() {
@@ -119,7 +121,7 @@ public class InputMgr : AComponent {
             if (keyData.Value) {
                 foreach (KeyValuePair<int, TkeyDelegateData> data in delegateMap) {
                     if (data.Value.component.gameObject.activeInHierarchy) {
-                        data.Value.fillDelegates(keyData.Key, callback);
+                        data.Value.fillDelegates(keyData.Key, ref callback);
                     }
                 }
             }

@@ -3,7 +3,9 @@ using System.Collections;
 
 public class Player : AComponent {
 
-    public float speed = 6f;
+    private Rigidbody rb;
+
+    public float speed;
     public float friction;
     public float lerpSpeed;
     public float xDeg;
@@ -13,16 +15,18 @@ public class Player : AComponent {
 
     private Vector3 movement;
 
+    private InputMgr inputMgr;
+
     protected override void Awake() {
         base.Awake();
-        GameMgr.GetInstance().GetServer<InputMgr>().RegisterReturn(this, back);
+        //inputMgr = GameMgr.GetInstance().GetServer<InputMgr>();
+        //inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.FORDWARD, fordward);
+        rb = GetComponent<Rigidbody>();
+        movement = Vector3.zero;
     }
 
-    public void back() {
-        Debug.Log("Back pressed");
-        //movement.Set(h, 0f, v);
-        //movement = movement.normalized * speed * Time.deltaTime;
-        //playerRigidbody.MovePosition(transform.position + movement);
+    public void fordward() {
+        Debug.Log("fordward");
     }
 
     protected override void Start() {
@@ -31,5 +35,13 @@ public class Player : AComponent {
 
     protected override void Update() {
         base.Update();
+    }
+
+    void FixedUpdate() {
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        movement.Set(h, 0f, v);
+        movement = movement.normalized * speed * Time.deltaTime;
+        rb.MovePosition(transform.position + movement);
     }
 }

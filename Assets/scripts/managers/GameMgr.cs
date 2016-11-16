@@ -18,7 +18,7 @@ public class GameMgr : MonoBehaviour {
         InputMgr inputMgr = AddServer<InputMgr>();
     }
 
-    /***************************************** SERVERS *******************************************/
+    #region SERVERS
 
     protected T AddServer<T>() where T : Component {
         T t = servers.GetComponent<T>();
@@ -43,5 +43,5 @@ public class GameMgr : MonoBehaviour {
             return null;
     }
 
-    /*********************************************************************************************/
+    #endregion
 }
