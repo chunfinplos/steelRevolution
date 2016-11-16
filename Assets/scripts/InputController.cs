@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class InputController {
 
     public struct TKeys {
-        public KeyCode FORDWARD {
+        public KeyCode FORWARD {
             get; private set;
         }
         public KeyCode BACKWARD {
@@ -19,7 +19,7 @@ public class InputController {
         }
 
         public TKeys(bool isDefault) {
-            FORDWARD = KeyCode.W;
+            FORWARD = KeyCode.W;
             BACKWARD = KeyCode.S;
             JUMP = KeyCode.Space;
             BACK = KeyCode.Escape;
@@ -60,7 +60,7 @@ public class InputController {
 
     private void initActiveKeys() {
         activeKeys = new Dictionary<KeyCode, bool>();
-        activeKeys[keys.FORDWARD] = false;
+        activeKeys[keys.FORWARD] = false;
         activeKeys[keys.BACKWARD] = false;
         activeKeys[keys.JUMP] = false;
         activeKeys[keys.BACK] = false;
@@ -71,11 +71,11 @@ public class InputController {
     }
 
     public Dictionary<KeyCode, bool> getActiveKeys() {
-        if (Input.GetKeyDown(keys.FORDWARD))
-            activeKeys[keys.FORDWARD] = true;
+        if (Input.GetKey(keys.FORWARD))
+            activeKeys[keys.FORWARD] = true;
         else
-            activeKeys[keys.FORDWARD] = false;
-        if (Input.GetKeyDown(keys.BACKWARD))
+            activeKeys[keys.FORWARD] = false;
+        if (Input.GetKey(keys.BACKWARD))
             activeKeys[keys.BACKWARD] = true;
         else
             activeKeys[keys.BACKWARD] = false;

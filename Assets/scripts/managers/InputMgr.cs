@@ -33,11 +33,11 @@ public class InputMgr : AComponent {
         }
 
         public void addDelegate(KeyCode kCode, keyDelegate kDel) {
-            //if (keyDelegateMap.ContainsKey(kCode)) {
-            //    keyDelegateMap[kCode] += kDel;
-            //} else {
-            //    keyDelegateMap[kCode]
-            //}
+            if (keyDelegateMap.ContainsKey(kCode)) {
+                keyDelegateMap[kCode] += kDel;
+            } else {
+                keyDelegateMap.Add(kCode, kDel);
+            }
             keyDelegateMap[kCode] += kDel;
             n++;
         }

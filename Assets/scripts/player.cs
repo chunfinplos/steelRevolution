@@ -19,14 +19,27 @@ public class Player : AComponent {
 
     protected override void Awake() {
         base.Awake();
-        //inputMgr = GameMgr.GetInstance().GetServer<InputMgr>();
-        //inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.FORDWARD, fordward);
+        inputMgr = GameMgr.GetInstance().GetServer<InputMgr>();
+        inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.FORWARD, forward);
+        inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.BACKWARD, backward);
         rb = GetComponent<Rigidbody>();
         movement = Vector3.zero;
     }
 
-    public void fordward() {
-        Debug.Log("fordward");
+    public void forward() {
+        Debug.Log("forward");
+        movement.Set(1f, 0f, 0f);
+        movement = movement.normalized * speed * Time.deltaTime;
+        rb.MovePosition(transform.position + movement);
+        gameObject.BroadcastMessage("OnMovementForward", 90);
+    }
+
+    public void backward() {
+        Debug.Log("backward");
+        movement.Set(-1f, 0f, 0f);
+        movement = movement.normalized * speed * Time.deltaTime;
+        rb.MovePosition(transform.position + movement);
+        gameObject.BroadcastMessage("OnMovementBackward", 90);
     }
 
     protected override void Start() {
@@ -38,10 +51,10 @@ public class Player : AComponent {
     }
 
     void FixedUpdate() {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        movement.Set(h, 0f, v);
-        movement = movement.normalized * speed * Time.deltaTime;
-        rb.MovePosition(transform.position + movement);
+        //float h = Input.GetAxisRaw("Horizontal");
+        //float v = Input.GetAxisRaw("Vertical");
+        //movement.Set(h, 0f, v);
+        //movement = movement.normalized * speed * Time.deltaTime;
+        //rb.MovePosition(transform.position + movement);
     }
 }
