@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public delegate void keyDelegate(Dictionary<KeyEvt, bool> keyData);
+public delegate void keyDelegate(KeyCode kCode, Dictionary<KeyEvt, bool> keyData);
 public enum KeyEvt { DOWN, PRESSED, UP };
 
 public class InputMgr : AComponent {

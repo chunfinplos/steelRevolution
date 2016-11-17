@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameMgr : MonoBehaviour {
+public class GameMgr {
 
     private static GameMgr instance = null;
     private GameObject servers = null;

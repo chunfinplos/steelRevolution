@@ -28,4 +28,8 @@ public class WheelSpinAnimation : AComponent {
         rotate = true;
         this.degrees = degrees;
     }
+
+    void OnMovementStop() {
+        rotate = false;
+    }
 }
