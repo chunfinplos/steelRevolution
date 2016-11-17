@@ -47,7 +47,7 @@ public class InputController {
         get; private set;
     }
     public bool mousePressed;
-    private Dictionary<KeyCode, bool> activeKeys;
+    private Dictionary<KeyCode, Dictionary<KeyEvt, bool>> activeKeys; // [DOWN,PRESSED,UP]
 
     public InputController(bool isDefault) {
         keys = new TKeys(isDefault);
@@ -59,34 +59,94 @@ public class InputController {
     }
 
     private void initActiveKeys() {
-        activeKeys = new Dictionary<KeyCode, bool>();
-        activeKeys[keys.FORWARD] = false;
-        activeKeys[keys.BACKWARD] = false;
-        activeKeys[keys.JUMP] = false;
-        activeKeys[keys.BACK] = false;
+        activeKeys = new Dictionary<KeyCode, Dictionary<KeyEvt, bool>>();
+
+        /* FORWARD */
+        activeKeys.Add(keys.FORWARD, new Dictionary<KeyEvt, bool>());
+        activeKeys[keys.FORWARD][KeyEvt.DOWN] = false;
+        activeKeys[keys.FORWARD][KeyEvt.PRESSED] = false;
+        activeKeys[keys.FORWARD][KeyEvt.UP] = false;
+
+        /* BACKWARD */
+        activeKeys.Add(keys.BACKWARD, new Dictionary<KeyEvt, bool>());
+        activeKeys[keys.BACKWARD][KeyEvt.DOWN] = false;
+        activeKeys[keys.BACKWARD][KeyEvt.PRESSED] = false;
+        activeKeys[keys.BACKWARD][KeyEvt.UP] = false;
+
+        /* JUMP */
+        activeKeys.Add(keys.JUMP, new Dictionary<KeyEvt, bool>());
+        activeKeys[keys.JUMP][KeyEvt.DOWN] = false;
+        activeKeys[keys.JUMP][KeyEvt.PRESSED] = false;
+        activeKeys[keys.JUMP][KeyEvt.UP] = false;
+
+        /* BACK */
+        activeKeys.Add(keys.BACK, new Dictionary<KeyEvt, bool>());
+        activeKeys[keys.BACK][KeyEvt.DOWN] = false;
+        activeKeys[keys.BACK][KeyEvt.PRESSED] = false;
+        activeKeys[keys.BACK][KeyEvt.UP] = false;
     }
 
     private void setInputKeys() {
         //Input.
     }
 
-    public Dictionary<KeyCode, bool> getActiveKeys() {
+    public Dictionary<KeyCode, Dictionary<KeyEvt, bool>> getActiveKeys() {
+        /* FORWARD */
+        if (Input.GetKeyDown(keys.FORWARD))
+            activeKeys[keys.FORWARD][KeyEvt.DOWN] = true;
+        else
+            activeKeys[keys.FORWARD][KeyEvt.DOWN] = false;
         if (Input.GetKey(keys.FORWARD))
-            activeKeys[keys.FORWARD] = true;
+            activeKeys[keys.FORWARD][KeyEvt.PRESSED] = true;
         else
-            activeKeys[keys.FORWARD] = false;
+            activeKeys[keys.FORWARD][KeyEvt.PRESSED] = false;
+        if (Input.GetKeyUp(keys.FORWARD))
+            activeKeys[keys.FORWARD][KeyEvt.UP] = true;
+        else
+            activeKeys[keys.FORWARD][KeyEvt.UP] = false;
+
+        /* BACKWARD */
+        if (Input.GetKeyDown(keys.BACKWARD))
+            activeKeys[keys.BACKWARD][KeyEvt.DOWN] = true;
+        else
+            activeKeys[keys.BACKWARD][KeyEvt.DOWN] = false;
         if (Input.GetKey(keys.BACKWARD))
-            activeKeys[keys.BACKWARD] = true;
+            activeKeys[keys.BACKWARD][KeyEvt.PRESSED] = true;
         else
-            activeKeys[keys.BACKWARD] = false;
+            activeKeys[keys.BACKWARD][KeyEvt.PRESSED] = false;
+        if (Input.GetKeyUp(keys.BACKWARD))
+            activeKeys[keys.BACKWARD][KeyEvt.UP] = true;
+        else
+            activeKeys[keys.BACKWARD][KeyEvt.UP] = false;
+
+        /* JUMP */
         if (Input.GetKeyDown(keys.JUMP))
-            activeKeys[keys.JUMP] = true;
+            activeKeys[keys.JUMP][KeyEvt.DOWN] = true;
         else
-            activeKeys[keys.JUMP] = false;
+            activeKeys[keys.JUMP][KeyEvt.DOWN] = false;
+        if (Input.GetKey(keys.JUMP))
+            activeKeys[keys.JUMP][KeyEvt.PRESSED] = true;
+        else
+            activeKeys[keys.JUMP][KeyEvt.PRESSED] = false;
+        if (Input.GetKeyUp(keys.JUMP))
+            activeKeys[keys.JUMP][KeyEvt.UP] = true;
+        else
+            activeKeys[keys.JUMP][KeyEvt.UP] = false;
+
+        /* BACK */
         if (Input.GetKeyDown(keys.BACK))
-            activeKeys[keys.BACK] = true;
+            activeKeys[keys.BACK][KeyEvt.DOWN] = true;
         else
-            activeKeys[keys.BACK] = false;
+            activeKeys[keys.BACK][KeyEvt.DOWN] = false;
+        if (Input.GetKey(keys.BACK))
+            activeKeys[keys.BACK][KeyEvt.PRESSED] = true;
+        else
+            activeKeys[keys.BACK][KeyEvt.PRESSED] = false;
+        if (Input.GetKeyUp(keys.BACK))
+            activeKeys[keys.BACK][KeyEvt.UP] = true;
+        else
+            activeKeys[keys.BACK][KeyEvt.UP] = false;
+
         return activeKeys;
     }
 }

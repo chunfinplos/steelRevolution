@@ -1,59 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public delegate void keyDelegate(Dictionary<KeyEvt, bool> keyData);
+public enum KeyEvt { DOWN, PRESSED, UP };
+
 public class InputMgr : AComponent {
-
-    public class TargetClick {
-        private GameObject gameObject;
-        private Vector3 point;
-        private float distance;
-        private Camera camera;
-
-        public TargetClick(GameObject gameObject, Vector3 point, float distance, Camera camera) {
-            this.gameObject = gameObject;
-            this.point = point;
-            this.distance = distance;
-            this.camera = camera;
-        }
-    }
-
-    protected class TkeyDelegateData {
-        public AComponent component {
-            get; private set;
-        }
-        private Dictionary<KeyCode, keyDelegate> keyDelegateMap;
-        public int n {
-            get; private set;
-        }
-
-        public TkeyDelegateData(AComponent component, KeyCode kCode, keyDelegate firstDel) {
-            this.component = component;
-            keyDelegateMap = new Dictionary<KeyCode, keyDelegate>();
-            keyDelegateMap.Add(kCode, firstDel);
-        }
-
-        public void addDelegate(KeyCode kCode, keyDelegate kDel) {
-            if (keyDelegateMap.ContainsKey(kCode)) {
-                keyDelegateMap[kCode] += kDel;
-            } else {
-                keyDelegateMap.Add(kCode, kDel);
-            }
-            keyDelegateMap[kCode] += kDel;
-            n++;
-        }
-
-        public void removeDelegate(KeyCode kCode, keyDelegate kDel) {
-            keyDelegateMap[kCode] -= kDel;
-            n--;
-        }
-
-        public void fillDelegates(KeyCode kCode, ref keyDelegate callback) {
-            if (keyDelegateMap.ContainsKey(kCode)) {
-                callback += keyDelegateMap[kCode];
-            }
-        }
-    }
-
     //public enum TMouseButtonID { LEFT = 0, RIGHT = 1 };
     //private bool mousePressed = false;
 
@@ -70,7 +21,6 @@ public class InputMgr : AComponent {
     private TargetClick targetClick;
 
     //public delegate void ReturnDelegate();
-    public delegate void keyDelegate();
     protected Dictionary<int, TkeyDelegateData> delegateMap;
     //protected Dictionary<int, AComponent> retDelGoMap = new Dictionary<int, AComponent>();
 
@@ -100,9 +50,9 @@ public class InputMgr : AComponent {
 
     public void RegisterKeyDelegate(AComponent component, KeyCode kCode, keyDelegate kDel) {
         if (delegateMap.ContainsKey(component.GetID())) {
-                delegateMap[component.GetID()].addDelegate(kCode, kDel);
+            delegateMap[component.GetID()].addDelegate(kCode, kDel);
         } else {
-                delegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
+            delegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
         }
     }
 
@@ -115,23 +65,22 @@ public class InputMgr : AComponent {
         }
     }
 
-    public void KeyDelegateCB(Dictionary<KeyCode, bool> activeKeys) {
-        keyDelegate callback = null;
-        foreach (KeyValuePair<KeyCode, bool> keyData in activeKeys) {
-            if (keyData.Value) {
+    public void KeyDelegateCB(Dictionary<KeyCode, Dictionary<KeyEvt, bool>> activeKeys) {
+        foreach (KeyValuePair<KeyCode, Dictionary<KeyEvt, bool>> keyData in activeKeys) {
+            if (keyData.Value[KeyEvt.DOWN] ||
+                keyData.Value[KeyEvt.PRESSED] ||
+                keyData.Value[KeyEvt.UP]) {
                 foreach (KeyValuePair<int, TkeyDelegateData> data in delegateMap) {
                     if (data.Value.component.gameObject.activeInHierarchy) {
-                        data.Value.fillDelegates(keyData.Key, ref callback);
+                        data.Value.callDelegate(keyData.Key, keyData.Value);
                     }
                 }
             }
         }
-        if (callback != null)
-            callback();
     }
 
     protected void OnKey() {
-        Dictionary<KeyCode, bool> activeKeys = inputCtrl.getActiveKeys();
+        Dictionary<KeyCode, Dictionary<KeyEvt, bool>> activeKeys = inputCtrl.getActiveKeys();
         KeyDelegateCB(activeKeys);
     }
 

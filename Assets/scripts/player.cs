@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : AComponent {
 
@@ -20,10 +21,20 @@ public class Player : AComponent {
     protected override void Awake() {
         base.Awake();
         inputMgr = GameMgr.GetInstance().GetServer<InputMgr>();
-        inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.FORWARD, forward);
-        inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.BACKWARD, backward);
+        inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.FORWARD, key);
         rb = GetComponent<Rigidbody>();
         movement = Vector3.zero;
+    }
+
+    public void key(Dictionary<KeyEvt, bool> keyData) {
+        string[] s = new string[] { "","","" };
+        if (keyData[KeyEvt.DOWN])
+            s[0] = "DOWN";
+        if (keyData[KeyEvt.PRESSED])
+            s[1] = "PRESSED";
+        if (keyData[KeyEvt.UP])
+            s[2] = "UP";
+        Debug.Log(s[0] + " _ " + s[1] + " _ " + s[2]);
     }
 
     public void forward() {
