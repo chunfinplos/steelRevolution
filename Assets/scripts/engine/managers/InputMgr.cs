@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public delegate void keyDelegate(KeyCode kCode, Dictionary<KeyEvt, bool> keyData);
-public enum KeyEvt { DOWN, PRESSED, UP };
+public delegate void keyDelegate(KeyCode kCode, Dictionary<inputEvt, bool> keyData);
+public delegate void mouseDelegate(int mCode, Dictionary<inputEvt, bool> mouseData);
+public enum inputEvt { DOWN, PRESSED, UP };
 
 public class InputMgr : AComponent {
     //public enum TMouseButtonID { LEFT = 0, RIGHT = 1 };
@@ -19,18 +20,18 @@ public class InputMgr : AComponent {
     protected ClickDelegate clickPressed;
     protected ClickDelegate clickEnd;
     private TargetClick targetClick;
-
-    //public delegate void ReturnDelegate();
-    protected Dictionary<int, TkeyDelegateData> delegateMap;
-    //protected Dictionary<int, AComponent> retDelGoMap = new Dictionary<int, AComponent>();
+    
+    protected Dictionary<int, TkeyDelegateData> kbDelegateMap;
+    protected Dictionary<int, TMouseDelegateData> msDelegateMap;
 
     #region MAIN
-    
+
     protected override void Awake() {
         base.Awake();
         inputCtrl = new InputController(true);
 
-        delegateMap = new Dictionary<int, TkeyDelegateData>();
+        kbDelegateMap = new Dictionary<int, TkeyDelegateData>();
+        msDelegateMap = new Dictionary<int, TMouseDelegateData>();
     }
 
     protected override void Start() {
@@ -46,31 +47,31 @@ public class InputMgr : AComponent {
 
     #endregion MAIN
 
-    #region RETURN
+    #region KEYS
 
     public void RegisterKeyDelegate(AComponent component, KeyCode kCode, keyDelegate kDel) {
-        if (delegateMap.ContainsKey(component.GetID())) {
-            delegateMap[component.GetID()].addDelegate(kCode, kDel);
+        if (kbDelegateMap.ContainsKey(component.GetID())) {
+            kbDelegateMap[component.GetID()].addDelegate(kCode, kDel);
         } else {
-            delegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
+            kbDelegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
         }
     }
 
     public void UnRegisterKeyDelegate(AComponent component, KeyCode kCode, keyDelegate kDel) {
-        if (delegateMap.ContainsKey(component.GetID())) {
-            delegateMap[component.GetID()].removeDelegate(kCode, kDel);
-            if (delegateMap[component.GetID()].n <= 0) {
-                delegateMap.Remove(component.GetID());
+        if (kbDelegateMap.ContainsKey(component.GetID())) {
+            kbDelegateMap[component.GetID()].removeDelegate(kCode, kDel);
+            if (kbDelegateMap[component.GetID()].n <= 0) {
+                kbDelegateMap.Remove(component.GetID());
             }
         }
     }
 
-    public void KeyDelegateCB(Dictionary<KeyCode, Dictionary<KeyEvt, bool>> activeKeys) {
-        foreach (KeyValuePair<KeyCode, Dictionary<KeyEvt, bool>> keyData in activeKeys) {
-            if (keyData.Value[KeyEvt.DOWN] ||
-                keyData.Value[KeyEvt.PRESSED] ||
-                keyData.Value[KeyEvt.UP]) {
-                foreach (KeyValuePair<int, TkeyDelegateData> data in delegateMap) {
+    public void KeyDelegateCB(Dictionary<KeyCode, Dictionary<inputEvt, bool>> activeKeys) {
+        foreach (KeyValuePair<KeyCode, Dictionary<inputEvt, bool>> keyData in activeKeys) {
+            if (keyData.Value[inputEvt.DOWN] ||
+                keyData.Value[inputEvt.PRESSED] ||
+                keyData.Value[inputEvt.UP]) {
+                foreach (KeyValuePair<int, TkeyDelegateData> data in kbDelegateMap) {
                     if (data.Value.component.gameObject.activeInHierarchy) {
                         data.Value.callDelegate(keyData.Key, keyData.Value);
                     }
@@ -80,80 +81,79 @@ public class InputMgr : AComponent {
     }
 
     protected void OnKey() {
-        Dictionary<KeyCode, Dictionary<KeyEvt, bool>> activeKeys = inputCtrl.getActiveKeys();
+        Dictionary<KeyCode, Dictionary<inputEvt, bool>> activeKeys = inputCtrl.getActiveKeys();
         KeyDelegateCB(activeKeys);
     }
 
     #endregion
 
-    #region CLICK
+    #region MOUSE
 
-    public void RegisterClickEvent(ClickDelegate begin, ClickDelegate end, ClickDelegate pressed) {
-        if (begin != null)
-            clickBegin += begin;
-
-        if (end != null)
-            clickEnd += end;
-
-        if (pressed != null)
-            clickPressed += pressed;
+    public void RegisterMouseDelegate(AComponent component, int mCode, mouseDelegate mDel) {
+        if (msDelegateMap.ContainsKey(component.GetID())) {
+            msDelegateMap[component.GetID()].addDelegate(mCode, mDel);
+        } else {
+            msDelegateMap[component.GetID()] = new TMouseDelegateData(component, mCode, mDel);
+        }
     }
 
-    public void UnRegisterClickEvent(ClickDelegate begin, ClickDelegate end, ClickDelegate pressed) {
-        if (begin != null)
-            clickBegin -= begin;
+    public void UnRegisterMouseDelegate(AComponent component, int mCode, mouseDelegate mDel) {
+        if (msDelegateMap.ContainsKey(component.GetID())) {
+            msDelegateMap[component.GetID()].removeDelegate(mCode, mDel);
+            if (msDelegateMap[component.GetID()].n <= 0) {
+                msDelegateMap.Remove(component.GetID());
+            }
+        }
+    }
 
-        if (end != null)
-            clickEnd -= end;
-
-        if (pressed != null)
-            clickPressed -= pressed;
+    public void mouseDelegateCB(Dictionary<int, Dictionary<inputEvt, bool>> activeButtons) {
+        foreach (KeyValuePair<int, Dictionary<inputEvt, bool>> buttonData in activeButtons) {
+            if (buttonData.Value[inputEvt.DOWN] ||
+                buttonData.Value[inputEvt.PRESSED] ||
+                buttonData.Value[inputEvt.UP]) {
+                foreach (KeyValuePair<int, TMouseDelegateData> data in msDelegateMap) {
+                    if (data.Value.component.gameObject.activeInHierarchy) {
+                        data.Value.callDelegate(buttonData.Key, buttonData.Value);
+                    }
+                }
+            }
+        }
     }
 
     protected void OnClick() {
-        Vector3 mousePosition = Input.mousePosition;
-        if (Input.GetMouseButtonDown(inputCtrl.buttons.LEFT)) {
-            CheckTouch(mousePosition, true);
-            inputCtrl.mousePressed = true;
-        } else if (Input.GetMouseButton(inputCtrl.buttons.LEFT)) {
-            CheckTouch(mousePosition, false);
-            inputCtrl.mousePressed = true;
-        } else if (inputCtrl.mousePressed) {
-            if (clickEnd != null)
-                clickEnd(targetClick);
-            inputCtrl.mousePressed = false;
-        }
+        Dictionary<int, Dictionary<inputEvt, bool>> activeButtons = inputCtrl.getActiveButtons();
+        mouseDelegateCB(activeButtons);
     }
 
-    protected void CheckTouch(Vector3 mousePosition, bool begin) {
-        bool isCollision = false;
-        Camera[] cameras = Camera.allCameras;
+    //protected void CheckTouch(Vector3 mousePosition, bool begin) {
+    //    bool isCollision = false;
+    //    Camera[] cameras = Camera.allCameras;
 
-        int i = cameras.Length - 1;
-        while (!isCollision && i >= 0) {
-            isCollision = ThrowRay(cameras[i], mousePosition, begin);
-            i--;
-        }
-    }
+    //    int i = cameras.Length - 1;
+    //    while (!isCollision && i >= 0) {
+    //        isCollision = ThrowRay(cameras[i], mousePosition, begin);
+    //        i--;
+    //    }
+    //}
 
-    protected bool ThrowRay(Camera camera, Vector3 position, bool begin) {
-        targetClick = null;
+    //protected bool ThrowRay(Camera camera, Vector3 position, bool begin) {
+    //    targetClick = null;
 
-        Ray ray = camera.ScreenPointToRay(position);
-        RaycastHit hit;
-        bool collision = Physics.Raycast(ray, out hit);
-        if (collision) {
-            targetClick = new TargetClick(hit.collider.gameObject, hit.point, hit.distance, camera);
-            if (begin) {
-                if (clickBegin != null)
-                    clickBegin(targetClick);
-            } else {
-                if (clickPressed != null)
-                    clickPressed(targetClick);
-            }
-        }
-        return collision;
-    }
+    //    Ray ray = camera.ScreenPointToRay(position);
+    //    RaycastHit hit;
+    //    bool collision = Physics.Raycast(ray, out hit);
+    //    if (collision) {
+    //        targetClick = new TargetClick(hit.collider.gameObject, hit.point, hit.distance, camera);
+    //        if (begin) {
+    //            if (clickBegin != null)
+    //                clickBegin(targetClick);
+    //        } else {
+    //            if (clickPressed != null)
+    //                clickPressed(targetClick);
+    //        }
+    //    }
+    //    return collision;
+    //}
 
     #endregion
 }

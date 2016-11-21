@@ -32,7 +32,7 @@ public class TkeyDelegateData {
         n--;
     }
 
-    public void callDelegate(KeyCode kCode, Dictionary<KeyEvt, bool> keyData) {
+    public void callDelegate(KeyCode kCode, Dictionary<inputEvt, bool> keyData) {
         if (keyDelegateMap.ContainsKey(kCode)) {
             if (keyDelegateMap[kCode] != null) {
                 keyDelegateMap[kCode](kCode, keyData);
