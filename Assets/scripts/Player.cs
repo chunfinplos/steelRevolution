@@ -18,6 +18,8 @@ public class Player : AComponent {
     private Vector3 movement;
 
     private InputMgr inputMgr;
+
+    /* States */
     private bool forward;
     private bool backward;
     private bool jump;
@@ -90,22 +92,6 @@ public class Player : AComponent {
         }
     }
 
-    //public void forward() {
-    //    Debug.Log("forward");
-    //    movement.Set(1f, 0f, 0f);
-    //    movement = movement.normalized * speed * Time.deltaTime;
-    //    rb.MovePosition(transform.position + movement);
-    //    gameObject.BroadcastMessage("OnMovementForward", 90);
-    //}
-
-    //public void backward() {
-    //    Debug.Log("backward");
-    //    movement.Set(-1f, 0f, 0f);
-    //    movement = movement.normalized * speed * Time.deltaTime;
-    //    rb.MovePosition(transform.position + movement);
-    //    gameObject.BroadcastMessage("OnMovementBackward", 90);
-    //}
-
     protected override void Start() {
         base.Start();
     }
@@ -119,7 +105,7 @@ public class Player : AComponent {
             if (forward) {
                 if (jump) {
                     movement.Set(1f, 1f, 0f);
-                    rb.AddForce(movement * jumpSpeed);
+                    rb.AddForce(movement.normalized * jumpSpeed);
                     onGround = false;
                 } else {
                     movement.Set(1f, 0f, 0f);
@@ -128,29 +114,29 @@ public class Player : AComponent {
                 }
                 gameObject.BroadcastMessage("OnMovementForward", 90);
             }
+            if (backward) {
+                if (jump) {
+                    movement.Set(-1f, 1f, 0f);
+                    rb.AddForce(movement.normalized * jumpSpeed);
+                    onGround = false;
+                } else {
+                    movement.Set(-1f, 0f, 0f);
+                    movement = movement.normalized * speed * Time.deltaTime;
+                    rb.MovePosition(transform.position + movement);
+                }
+                gameObject.BroadcastMessage("OnMovementBackward", 90);
+            }
+            if (jump) {
+                movement.Set(0f, 1f, 0f);
+                rb.AddForce(movement.normalized * jumpSpeed);
+                onGround = false;
+            }
         }
-        //if (backward) {
-        //    movement.Set(-1f, 0f, 0f);
-        //    movement = movement.normalized * speed * Time.deltaTime;
-        //    rb.MovePosition(transform.position + movement);
-        //    gameObject.BroadcastMessage("OnMovementBackward", 90);
-        //}
+    }
 
-        //if (!forward && !backward) {
-        //    gameObject.BroadcastMessage("OnMovementStop");
-        //}
-
-        //if (jump) {
-        //    movement.Set(0f, 1f, 0f);
-        //    movement = movement.normalized * jumpSpeed * Time.deltaTime;
-        //    rb.MovePosition(transform.position + movement);
-        //}
-
-
-        //float h = Input.GetAxisRaw("Horizontal");
-        //float v = Input.GetAxisRaw("Vertical");
-        //movement.Set(h, 0f, v);
-        //movement = movement.normalized * speed * Time.deltaTime;
-        //rb.MovePosition(transform.position + movement);
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Floor")) {
+            onGround = true;
+        }
     }
 }
