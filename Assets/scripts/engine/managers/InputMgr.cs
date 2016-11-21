@@ -21,7 +21,7 @@ public class InputMgr : AComponent {
     protected ClickDelegate clickEnd;
     private TargetClick targetClick;
     
-    protected Dictionary<int, TkeyDelegateData> kbDelegateMap;
+    protected Dictionary<int, TKeyDelegateData> kbDelegateMap;
     protected Dictionary<int, TMouseDelegateData> msDelegateMap;
 
     #region MAIN
@@ -30,7 +30,7 @@ public class InputMgr : AComponent {
         base.Awake();
         inputCtrl = new InputController(true);
 
-        kbDelegateMap = new Dictionary<int, TkeyDelegateData>();
+        kbDelegateMap = new Dictionary<int, TKeyDelegateData>();
         msDelegateMap = new Dictionary<int, TMouseDelegateData>();
     }
 
@@ -53,7 +53,7 @@ public class InputMgr : AComponent {
         if (kbDelegateMap.ContainsKey(component.GetID())) {
             kbDelegateMap[component.GetID()].addDelegate(kCode, kDel);
         } else {
-            kbDelegateMap[component.GetID()] = new TkeyDelegateData(component, kCode, kDel);
+            kbDelegateMap[component.GetID()] = new TKeyDelegateData(component, kCode, kDel);
         }
     }
 
@@ -71,7 +71,7 @@ public class InputMgr : AComponent {
             if (keyData.Value[inputEvt.DOWN] ||
                 keyData.Value[inputEvt.PRESSED] ||
                 keyData.Value[inputEvt.UP]) {
-                foreach (KeyValuePair<int, TkeyDelegateData> data in kbDelegateMap) {
+                foreach (KeyValuePair<int, TKeyDelegateData> data in kbDelegateMap) {
                     if (data.Value.component.gameObject.activeInHierarchy) {
                         data.Value.callDelegate(keyData.Key, keyData.Value);
                     }
