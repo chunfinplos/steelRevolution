@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TkeyDelegateData {
+public class TKeyDelegateData {
     public AComponent component {
         get; private set;
     }
@@ -11,7 +11,7 @@ public class TkeyDelegateData {
         get; private set;
     }
 
-    public TkeyDelegateData(AComponent component, KeyCode kCode, keyDelegate firstDel) {
+    public TKeyDelegateData(AComponent component, KeyCode kCode, keyDelegate firstDel) {
         this.component = component;
         keyDelegateMap = new Dictionary<KeyCode, keyDelegate>();
         keyDelegateMap.Add(kCode, firstDel);
@@ -32,7 +32,7 @@ public class TkeyDelegateData {
         n--;
     }
 
-    public void callDelegate(KeyCode kCode, Dictionary<KeyEvt, bool> keyData) {
+    public void callDelegate(KeyCode kCode, Dictionary<inputEvt, bool> keyData) {
         if (keyDelegateMap.ContainsKey(kCode)) {
             if (keyDelegateMap[kCode] != null) {
                 keyDelegateMap[kCode](kCode, keyData);

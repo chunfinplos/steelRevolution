@@ -18,6 +18,8 @@ public class Player : AComponent {
     private Vector3 movement;
 
     private InputMgr inputMgr;
+
+    /* States */
     private bool forward;
     private bool backward;
     private bool jump;
@@ -32,6 +34,7 @@ public class Player : AComponent {
         onGround = true;
 
         registerKeys();
+        registerButtons();
     }
 
     private void registerKeys() {
@@ -40,7 +43,12 @@ public class Player : AComponent {
         inputMgr.RegisterKeyDelegate(this, inputMgr.inputCtrl.keys.JUMP, key);
     }
 
-    public void key(KeyCode kCode, Dictionary<KeyEvt, bool> keyData) {
+    private void registerButtons() {
+        inputMgr.RegisterMouseDelegate(this, inputMgr.inputCtrl.buttons.LEFTSHOOT, button);
+        inputMgr.RegisterMouseDelegate(this, inputMgr.inputCtrl.buttons.RIGHTSHOOT, button);
+    }
+
+    public void key(KeyCode kCode, Dictionary<inputEvt, bool> keyData) {
         if (onGround) {
             if (kCode == inputMgr.inputCtrl.keys.FORWARD) {
                 movementForward(keyData);
@@ -55,56 +63,52 @@ public class Player : AComponent {
             jump = false;
         }
         //string[] s = new string[] { "","","" };
-        //if (keyData[KeyEvt.DOWN])
+        //if (keyData[inputEvt.DOWN])
         //    s[0] = "DOWN";
-        //if (keyData[KeyEvt.PRESSED])
+        //if (keyData[inputEvt.PRESSED])
         //    s[1] = "PRESSED";
-        //if (keyData[KeyEvt.UP])
+        //if (keyData[inputEvt.UP])
         //    s[2] = "UP";
         //Debug.Log(s[0] + " _ " + s[1] + " _ " + s[2]);
     }
 
-    private void movementForward(Dictionary<KeyEvt, bool> keyData) {
-        if (keyData[KeyEvt.DOWN] || keyData[KeyEvt.PRESSED]) {
+    public void button(int mCode, Dictionary<inputEvt, bool> buttonData) {
+        string[] s = new string[] { "", "", "" };
+        if (buttonData[inputEvt.DOWN])
+            s[0] = "DOWN";
+        if (buttonData[inputEvt.PRESSED])
+            s[1] = "PRESSED";
+        if (buttonData[inputEvt.UP])
+            s[2] = "UP";
+        Debug.Log(mCode + ": " + s[0] + " _ " + s[1] + " _ " + s[2]);
+    }
+
+
+    private void movementForward(Dictionary<inputEvt, bool> keyData) {
+        if (keyData[inputEvt.DOWN] || keyData[inputEvt.PRESSED]) {
             forward = true;
         }
-        if (keyData[KeyEvt.UP]) {
+        if (keyData[inputEvt.UP]) {
             forward = false;
         }
     }
 
-    private void movementBackward(Dictionary<KeyEvt, bool> keyData) {
-        if (keyData[KeyEvt.DOWN] || keyData[KeyEvt.PRESSED]) {
+    private void movementBackward(Dictionary<inputEvt, bool> keyData) {
+        if (keyData[inputEvt.DOWN] || keyData[inputEvt.PRESSED]) {
             backward = true;
         }
-        if (keyData[KeyEvt.UP]) {
+        if (keyData[inputEvt.UP]) {
             backward = false;
         }
     }
 
-    private void movementJump(Dictionary<KeyEvt, bool> keyData) {
-        if (keyData[KeyEvt.DOWN]) {
+    private void movementJump(Dictionary<inputEvt, bool> keyData) {
+        if (keyData[inputEvt.DOWN]) {
             jump = true;
         } else {
             jump = false;
         }
     }
-
-    //public void forward() {
-    //    Debug.Log("forward");
-    //    movement.Set(1f, 0f, 0f);
-    //    movement = movement.normalized * speed * Time.deltaTime;
-    //    rb.MovePosition(transform.position + movement);
-    //    gameObject.BroadcastMessage("OnMovementForward", 90);
-    //}
-
-    //public void backward() {
-    //    Debug.Log("backward");
-    //    movement.Set(-1f, 0f, 0f);
-    //    movement = movement.normalized * speed * Time.deltaTime;
-    //    rb.MovePosition(transform.position + movement);
-    //    gameObject.BroadcastMessage("OnMovementBackward", 90);
-    //}
 
     protected override void Start() {
         base.Start();
@@ -119,7 +123,7 @@ public class Player : AComponent {
             if (forward) {
                 if (jump) {
                     movement.Set(1f, 1f, 0f);
-                    rb.AddForce(movement * jumpSpeed);
+                    rb.AddForce(movement.normalized * jumpSpeed);
                     onGround = false;
                 } else {
                     movement.Set(1f, 0f, 0f);
@@ -128,29 +132,29 @@ public class Player : AComponent {
                 }
                 gameObject.BroadcastMessage("OnMovementForward", 90);
             }
+            if (backward) {
+                if (jump) {
+                    movement.Set(-1f, 1f, 0f);
+                    rb.AddForce(movement.normalized * jumpSpeed);
+                    onGround = false;
+                } else {
+                    movement.Set(-1f, 0f, 0f);
+                    movement = movement.normalized * speed * Time.deltaTime;
+                    rb.MovePosition(transform.position + movement);
+                }
+                gameObject.BroadcastMessage("OnMovementBackward", 90);
+            }
+            if (jump) {
+                movement.Set(0f, 1f, 0f);
+                rb.AddForce(movement.normalized * jumpSpeed);
+                onGround = false;
+            }
         }
-        //if (backward) {
-        //    movement.Set(-1f, 0f, 0f);
-        //    movement = movement.normalized * speed * Time.deltaTime;
-        //    rb.MovePosition(transform.position + movement);
-        //    gameObject.BroadcastMessage("OnMovementBackward", 90);
-        //}
+    }
 
-        //if (!forward && !backward) {
-        //    gameObject.BroadcastMessage("OnMovementStop");
-        //}
-
-        //if (jump) {
-        //    movement.Set(0f, 1f, 0f);
-        //    movement = movement.normalized * jumpSpeed * Time.deltaTime;
-        //    rb.MovePosition(transform.position + movement);
-        //}
-
-
-        //float h = Input.GetAxisRaw("Horizontal");
-        //float v = Input.GetAxisRaw("Vertical");
-        //movement.Set(h, 0f, v);
-        //movement = movement.normalized * speed * Time.deltaTime;
-        //rb.MovePosition(transform.position + movement);
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Floor")) {
+            onGround = true;
+        }
     }
 }
