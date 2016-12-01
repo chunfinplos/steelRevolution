@@ -6,6 +6,8 @@ public class Player : AComponent {
 
     private Rigidbody rb;
 
+    public float camRayLength;
+    private int backMask;
     public float speed;
     public float jumpSpeed;
     public float friction;
@@ -32,6 +34,7 @@ public class Player : AComponent {
         rb = GetComponent<Rigidbody>();
         movement = Vector3.zero;
         onGround = true;
+        backMask = LayerMask.GetMask("background");
 
         registerKeys();
         registerButtons();
@@ -131,8 +134,7 @@ public class Player : AComponent {
                     rb.MovePosition(transform.position + movement);
                 }
                 gameObject.BroadcastMessage("OnMovementForward", 90);
-            }
-            if (backward) {
+            } else if (backward) {
                 if (jump) {
                     movement.Set(-1f, 1f, 0f);
                     rb.AddForce(movement.normalized * jumpSpeed);
@@ -143,6 +145,8 @@ public class Player : AComponent {
                     rb.MovePosition(transform.position + movement);
                 }
                 gameObject.BroadcastMessage("OnMovementBackward", 90);
+            } else {
+                gameObject.BroadcastMessage("OnMovementStop");
             }
             if (jump) {
                 movement.Set(0f, 1f, 0f);
@@ -150,7 +154,22 @@ public class Player : AComponent {
                 onGround = false;
             }
         }
+        //Turning();
     }
+
+    //void Turning() {
+    //    Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit hitPoint;
+
+    //    if (Physics.Raycast(camRay, out hitPoint, camRayLength, backMask)) {
+    //        Vector3 playerToMouse = hitPoint.point - transform.position;
+    //        //playerToMouse.y = 0f;
+    //        Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
+    //        rb.MoveRotation(newRotation);
+
+    //        Debug.Log(hitPoint.point);
+    //    }
+    //}
 
     private void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Floor")) {
