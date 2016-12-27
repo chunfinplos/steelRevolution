@@ -4,9 +4,14 @@ using System.Collections;
 public class GameMgr {
 
     private static GameMgr instance = null;
+
     private GameObject servers = null;
 
-    public static GameMgr GetInstance() {
+    public SpawnerMgr spawnerMgr {
+        get; private set;
+    }
+
+public static GameMgr GetInstance() {
         if (instance == null) {
             instance = new GameMgr();
         }
@@ -19,6 +24,9 @@ public class GameMgr {
             InputMgr inputMgr = AddServer<InputMgr>();
             SceneMgr sceneMgr = AddServer<SceneMgr>();
         }
+
+        SceneMgr smAux = servers.GetComponent<SceneMgr>();
+        spawnerMgr = new SpawnerMgr(smAux);
     }
 
     #region SERVERS
