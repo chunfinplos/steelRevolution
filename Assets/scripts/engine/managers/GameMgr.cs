@@ -14,8 +14,11 @@ public class GameMgr {
     }
 
     private GameMgr() {
-        servers = new GameObject("Servers");
-        InputMgr inputMgr = AddServer<InputMgr>();
+        if (!servers) {
+            servers = new GameObject("Servers");
+            InputMgr inputMgr = AddServer<InputMgr>();
+            SceneMgr sceneMgr = AddServer<SceneMgr>();
+        }
     }
 
     #region SERVERS
