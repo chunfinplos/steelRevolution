@@ -6,6 +6,8 @@ public class Player : AComponent {
 
     private Rigidbody rb;
 
+    public float camRayLength;
+    private int backMask;
     public float speed;
     public float jumpSpeed;
     public float friction;
@@ -32,6 +34,7 @@ public class Player : AComponent {
         rb = GetComponent<Rigidbody>();
         movement = Vector3.zero;
         onGround = true;
+        backMask = LayerMask.GetMask("Background");
 
         registerKeys();
         registerButtons();
@@ -122,31 +125,32 @@ public class Player : AComponent {
         if (onGround) {
             if (forward) {
                 if (jump) {
-                    movement.Set(1f, 1f, 0f);
-                    rb.AddForce(movement.normalized * jumpSpeed);
+                    movement.Set(speed, jumpSpeed, 0f);
+                    rb.AddForce(movement, ForceMode.Impulse);
                     onGround = false;
                 } else {
-                    movement.Set(1f, 0f, 0f);
-                    movement = movement.normalized * speed * Time.deltaTime;
+                    movement.Set(speed, 0f, 0f);
+                    movement = movement * Time.deltaTime;
                     rb.MovePosition(transform.position + movement);
                 }
                 gameObject.BroadcastMessage("OnMovementForward", 90);
-            }
-            if (backward) {
+            } else if (backward) {
                 if (jump) {
-                    movement.Set(-1f, 1f, 0f);
-                    rb.AddForce(movement.normalized * jumpSpeed);
+                    movement.Set(-speed, jumpSpeed, 0f);
+                    rb.AddForce(movement, ForceMode.Impulse);
                     onGround = false;
                 } else {
-                    movement.Set(-1f, 0f, 0f);
-                    movement = movement.normalized * speed * Time.deltaTime;
+                    movement.Set(-speed, 0f, 0f);
+                    movement = movement * Time.deltaTime;
                     rb.MovePosition(transform.position + movement);
                 }
                 gameObject.BroadcastMessage("OnMovementBackward", 90);
+            } else {
+                gameObject.BroadcastMessage("OnMovementStop");
             }
             if (jump) {
-                movement.Set(0f, 1f, 0f);
-                rb.AddForce(movement.normalized * jumpSpeed);
+                movement.Set(0f, jumpSpeed, 0f);
+                rb.AddForce(movement, ForceMode.Impulse);
                 onGround = false;
             }
         }
