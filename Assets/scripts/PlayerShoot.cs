@@ -9,6 +9,8 @@ public class PlayerShoot : AComponent {
     public GameObject prefabR;
 
     public float bulletSpeed;
+    public Transform shootL;
+    public Transform shootR;
 
     #region MAIN
 
@@ -37,10 +39,10 @@ public class PlayerShoot : AComponent {
     }
 
     public void button(int mCode, Dictionary<inputEvt, bool> buttonData) {
-        Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if(mCode == inputMgr.inputCtrl.buttons.LEFTSHOOT && buttonData[inputEvt.DOWN]) {
-            Vector3 sourcePoint = gameObject.transform.GetChild(0).transform.position;
-            Quaternion sourceQ = gameObject.transform.GetChild(0).transform.rotation;
+            Vector3 sourcePoint = shootL.position;
+            Quaternion sourceQ = shootL.rotation;
             sourceQ *= Quaternion.Euler(Vector3.right * 90);
             GameObject bullet = GameMgr.GetInstance().spawnerMgr.
                                         CreateNewGameObject(prefabL, sourcePoint, sourceQ);
