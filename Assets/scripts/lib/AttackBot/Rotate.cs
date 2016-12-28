@@ -5,9 +5,13 @@ public class Rotate : AComponent {
 
     public bool rotate;
 
-    protected override void Start () {}
+    protected override void Start () {
+        base.Start();
+    }
 
-    protected override void Update () {}
+    protected override void Update () {
+        base.Update();
+    }
 
     void FixedUpdate() {
         if (rotate) {
