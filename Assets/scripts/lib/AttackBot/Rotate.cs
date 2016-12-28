@@ -4,17 +4,24 @@ using System.Collections;
 public class Rotate : AComponent {
 
     public bool rotate;
+    private int mask;
 
-    protected override void Start () {}
+    protected override void Awake() {
+        base.Awake();
+        mask = LayerMask.GetMask("Background") | LayerMask.GetMask("Shootable");
+    }
 
-    protected override void Update () {}
+    protected override void Start () {
+        base.Start();
+    }
 
-    void FixedUpdate() {
-        if (rotate) {
+    protected override void Update () {
+        base.Update();
+        if(rotate) {
             Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitPoint;
 
-            if (Physics.Raycast(camRay, out hitPoint, 100f, LayerMask.GetMask("Background"))) {
+            if(Physics.Raycast(camRay, out hitPoint, 100f, mask)) {
                 Vector3 playerToMouse = hitPoint.point;
                 //playerToMouse.y = 0f;
                 Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
@@ -23,4 +30,6 @@ public class Rotate : AComponent {
             }
         }
     }
+
+    //void FixedUpdate() {}
 }

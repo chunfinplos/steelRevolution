@@ -55,6 +55,7 @@ public class InputController {
     private Dictionary<KeyCode, Dictionary<inputEvt, bool>> activeKeys; // [DOWN,PRESSED,UP]
 
     public InputController(bool isDefault) {
+        Cursor.visible = true;
         keys = new TKeys(isDefault);
         buttons = new TButtons(isDefault);
 
