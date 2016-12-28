@@ -39,32 +39,14 @@ public class PlayerShoot : AComponent {
     }
 
     public void button(int mCode, Dictionary<inputEvt, bool> buttonData) {
-        //Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if(mCode == inputMgr.inputCtrl.buttons.LEFTSHOOT && buttonData[inputEvt.DOWN]) {
-            Vector3 sourcePoint = shootL.position;
-            Quaternion sourceQ = shootL.rotation;
-            sourceQ *= Quaternion.Euler(Vector3.right * 90);
-            GameObject bullet = GameMgr.GetInstance().spawnerMgr.
-                                        CreateNewGameObject(prefabL, sourcePoint, sourceQ);
+        if(buttonData[inputEvt.DOWN]) {
+            if(mCode == inputMgr.inputCtrl.buttons.LEFTSHOOT) {
+                Shoot(true);
+            } else if(mCode == inputMgr.inputCtrl.buttons.RIGHTSHOOT) {
+                Shoot(false);
+            } else {
 
-            //bullet.transform.LookAt(targetPoint);
-            //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
-            bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
-
-
-
-
-        } else if(mCode == inputMgr.inputCtrl.buttons.RIGHTSHOOT) {
-            
-
-            //var position = Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-            //position = 
-            //var go = Instantiate(prefab, transform.position, Quaternion.identity) as GameObject;
-            //go.transform.LookAt(position);
-            //Debug.Log(position);
-            //go.rigidbody.AddForce(go.transform.forward * 1000);
-        } else {
-
+            }
         }
 
         //string[] s = new string[] { "", "", "" };
@@ -75,5 +57,26 @@ public class PlayerShoot : AComponent {
         //if(buttonData[inputEvt.UP])
         //    s[2] = "UP";
         //Debug.Log(mCode + ": " + s[0] + " _ " + s[1] + " _ " + s[2]);
+    }
+
+    private void Shoot(bool isLeft) {
+        //Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 sourcePoint;
+        Quaternion sourceQ;
+        if(isLeft) {
+            sourcePoint = shootL.position;
+            sourceQ = shootL.rotation;
+        } else {
+            sourcePoint = shootR.position;
+            sourceQ = shootR.rotation;
+        }
+        sourceQ *= Quaternion.Euler(Vector3.right * 90);
+        sourceQ *= Quaternion.Euler(Vector3.up * 45);
+        GameObject bullet = GameMgr.GetInstance().spawnerMgr.
+                                    CreateNewGameObject(prefabL, sourcePoint, sourceQ);
+        
+        //bullet.transform.LookAt(targetPoint);
+        //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
+        bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
     }
 }
