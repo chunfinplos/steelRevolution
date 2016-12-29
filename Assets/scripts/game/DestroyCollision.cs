@@ -2,9 +2,7 @@
 using System.Collections;
 
 public class DestroyCollision : AComponent {
-
-
-
+    
     #region MAIN
 
     protected override void Awake() {
@@ -13,6 +11,8 @@ public class DestroyCollision : AComponent {
 
     protected override void Start() {
         base.Start();
+        Physics.IgnoreCollision(GetComponent<CapsuleCollider>(),
+            GameMgrExtension.GetCustomMgrs().gamePlayMgr.player.GetComponent<CapsuleCollider>());
     }
 
     protected override void Update() {
@@ -24,7 +24,7 @@ public class DestroyCollision : AComponent {
     #endregion
 
     void OnTriggerEnter(Collider other) {
-        Debug.Log("COLLISION");
+        Debug.Log("TIGGER");
         Destroy(gameObject);
     }
 }

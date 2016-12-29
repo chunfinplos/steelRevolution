@@ -26,7 +26,7 @@ public class GameMgr {
 
     private GameObject servers = null;
     public SpawnerMgr spawnerMgr { get; private set; }
-    private ProjectSpecificMgrs customMgrs = null;
+    public ProjectSpecificMgrs customMgrs = null;
 
 
     public static GameMgr GetInstance() {
@@ -80,11 +80,6 @@ public class GameMgr {
 
     public bool IsCustomMgrInit() {
         return customMgrs != null;
-    }
-
-    public ProjectSpecificMgrs CustomMgr {
-        get { return customMgrs; }
-        set { customMgrs = value; }
     }
 
     #endregion

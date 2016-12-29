@@ -5,18 +5,10 @@ using System.Collections.Generic;
 public class InputController {
 
     public struct TKeys {
-        public KeyCode FORWARD {
-            get; private set;
-        }
-        public KeyCode BACKWARD {
-            get; private set;
-        }
-        public KeyCode JUMP {
-            get; private set;
-        }
-        public KeyCode BACK {
-            get; private set;
-        }
+        public KeyCode FORWARD { get; private set; }
+        public KeyCode BACKWARD { get; private set; }
+        public KeyCode JUMP { get; private set; }
+        public KeyCode BACK { get; private set; }
 
         public TKeys(bool isDefault) {
             FORWARD = KeyCode.D;
@@ -27,15 +19,9 @@ public class InputController {
     };
 
     public struct TButtons {
-        public int LEFTSHOOT {
-            get; private set;
-        }
-        public int RIGHTSHOOT {
-            get; private set;
-        }
-        public int RELOAD {
-            get; private set;
-        }
+        public int LEFTSHOOT { get; private set; }
+        public int RIGHTSHOOT { get; private set; }
+        public int RELOAD { get; private set; }
 
         public TButtons(bool isDefault) {
             LEFTSHOOT = 0;
@@ -44,12 +30,8 @@ public class InputController {
         }
     };
 
-    public TKeys keys {
-        get; private set;
-    }
-    public TButtons buttons {
-        get; private set;
-    }
+    public TKeys keys { get; private set; }
+    public TButtons buttons { get; private set; }
     private Dictionary<int, Dictionary<inputEvt, bool>> activeButtons; // [DOWN,PRESSED,UP]
 
     private Dictionary<KeyCode, Dictionary<inputEvt, bool>> activeKeys; // [DOWN,PRESSED,UP]
