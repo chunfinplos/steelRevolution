@@ -23,7 +23,6 @@ public class TKeyDelegateData {
         } else {
             keyDelegateMap.Add(kCode, kDel);
         }
-        keyDelegateMap[kCode] += kDel;
         n++;
     }
 

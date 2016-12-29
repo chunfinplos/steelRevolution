@@ -63,17 +63,20 @@ public class PlayerShoot : AComponent {
         //Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 sourcePoint;
         Quaternion sourceQ;
+        GameObject prefab;
         if(isLeft) {
             sourcePoint = shootL.position;
             sourceQ = shootL.rotation;
+            prefab = prefabL;
         } else {
             sourcePoint = shootR.position;
             sourceQ = shootR.rotation;
+            prefab = prefabR;
         }
         sourceQ *= Quaternion.Euler(Vector3.right * 90);
         sourceQ *= Quaternion.Euler(Vector3.up * 45);
         GameObject bullet = GameMgr.GetInstance().spawnerMgr.
-                                    CreateNewGameObject(prefabL, sourcePoint, sourceQ);
+                                    CreateNewGameObject(prefab, sourcePoint, sourceQ);
         
         //bullet.transform.LookAt(targetPoint);
         //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
