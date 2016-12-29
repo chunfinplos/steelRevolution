@@ -11,8 +11,7 @@ public class DestroyCollision : AComponent {
 
     protected override void Start() {
         base.Start();
-        Physics.IgnoreCollision(GetComponent<CapsuleCollider>(),
-            GameMgrExtension.GetCustomMgrs().gamePlayMgr.player.GetComponent<CapsuleCollider>());
+        
     }
 
     protected override void Update() {
@@ -23,8 +22,13 @@ public class DestroyCollision : AComponent {
 
     #endregion
 
-    void OnTriggerEnter(Collider other) {
-        Debug.Log("TIGGER");
-        Destroy(gameObject);
+    //private void OnEnable() {
+    //    Physics.IgnoreCollision(GetComponent<CapsuleCollider>(),
+    //        GameMgrExtension.GetCustomMgrs().gamePlayMgr.player.GetComponent<CapsuleCollider>());
+    //}
+
+    private void OnCollisionEnter(Collision collision) {
+        Debug.Log("COLLISION");
+        GameMgr.GetInstance().spawnerMgr.DestroyGameObject(gameObject);
     }
 }

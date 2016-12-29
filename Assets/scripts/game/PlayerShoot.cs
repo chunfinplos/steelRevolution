@@ -78,10 +78,12 @@ public class PlayerShoot : AComponent {
         GameObject bullet = GameMgr.GetInstance().spawnerMgr.
                                     CreateNewGameObject(prefab, sourcePoint, sourceQ);
 
-        
+        Physics.IgnoreCollision(bullet.GetComponent<CapsuleCollider>(),
+            GameMgrExtension.GetCustomMgrs().gamePlayMgr.player.GetComponent<CapsuleCollider>());
 
         //bullet.transform.LookAt(targetPoint);
         //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
+
         bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
     }
 }
