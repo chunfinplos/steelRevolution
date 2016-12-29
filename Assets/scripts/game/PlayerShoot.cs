@@ -77,7 +77,9 @@ public class PlayerShoot : AComponent {
         sourceQ *= Quaternion.Euler(Vector3.up * 45);
         GameObject bullet = GameMgr.GetInstance().spawnerMgr.
                                     CreateNewGameObject(prefab, sourcePoint, sourceQ);
-        
+
+        Physics.IgnoreCollision(bullet.GetComponent<Collider>(), GetComponent<Collider>());
+
         //bullet.transform.LookAt(targetPoint);
         //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
         bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);

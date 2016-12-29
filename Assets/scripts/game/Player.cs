@@ -79,7 +79,10 @@ public class Player : AComponent {
         }
     }
 
-    //void FixedUpdate() {}
+    //void FixedUpdate() {
+    //    bool isMoving = !forward && !backward && !jump && onGround;
+    //    GetComponent<Animator>().SetBool("moving", isMoving);
+    //}
 
     #endregion
 

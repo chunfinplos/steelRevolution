@@ -19,9 +19,9 @@ public class InputController {
         }
 
         public TKeys(bool isDefault) {
-            FORWARD = KeyCode.W;
-            BACKWARD = KeyCode.S;
-            JUMP = KeyCode.Space;
+            FORWARD = KeyCode.D;
+            BACKWARD = KeyCode.A;
+            JUMP = KeyCode.W;
             BACK = KeyCode.Escape;
         }
     };
@@ -115,57 +115,57 @@ public class InputController {
 
     public Dictionary<KeyCode, Dictionary<inputEvt, bool>> getActiveKeys() {
         /* FORWARD */
-        if (Input.GetKeyDown(keys.FORWARD))
+        if(Input.GetKeyDown(keys.FORWARD))
             activeKeys[keys.FORWARD][inputEvt.DOWN] = true;
         else
             activeKeys[keys.FORWARD][inputEvt.DOWN] = false;
-        if (Input.GetKey(keys.FORWARD))
+        if(Input.GetKey(keys.FORWARD))
             activeKeys[keys.FORWARD][inputEvt.PRESSED] = true;
         else
             activeKeys[keys.FORWARD][inputEvt.PRESSED] = false;
-        if (Input.GetKeyUp(keys.FORWARD))
+        if(Input.GetKeyUp(keys.FORWARD))
             activeKeys[keys.FORWARD][inputEvt.UP] = true;
         else
             activeKeys[keys.FORWARD][inputEvt.UP] = false;
 
         /* BACKWARD */
-        if (Input.GetKeyDown(keys.BACKWARD))
+        if(Input.GetKeyDown(keys.BACKWARD))
             activeKeys[keys.BACKWARD][inputEvt.DOWN] = true;
         else
             activeKeys[keys.BACKWARD][inputEvt.DOWN] = false;
-        if (Input.GetKey(keys.BACKWARD))
+        if(Input.GetKey(keys.BACKWARD))
             activeKeys[keys.BACKWARD][inputEvt.PRESSED] = true;
         else
             activeKeys[keys.BACKWARD][inputEvt.PRESSED] = false;
-        if (Input.GetKeyUp(keys.BACKWARD))
+        if(Input.GetKeyUp(keys.BACKWARD))
             activeKeys[keys.BACKWARD][inputEvt.UP] = true;
         else
             activeKeys[keys.BACKWARD][inputEvt.UP] = false;
 
         /* JUMP */
-        if (Input.GetKeyDown(keys.JUMP))
+        if(Input.GetKeyDown(keys.JUMP))
             activeKeys[keys.JUMP][inputEvt.DOWN] = true;
         else
             activeKeys[keys.JUMP][inputEvt.DOWN] = false;
-        if (Input.GetKey(keys.JUMP))
+        if(Input.GetKey(keys.JUMP))
             activeKeys[keys.JUMP][inputEvt.PRESSED] = true;
         else
             activeKeys[keys.JUMP][inputEvt.PRESSED] = false;
-        if (Input.GetKeyUp(keys.JUMP))
+        if(Input.GetKeyUp(keys.JUMP))
             activeKeys[keys.JUMP][inputEvt.UP] = true;
         else
             activeKeys[keys.JUMP][inputEvt.UP] = false;
 
         /* BACK */
-        if (Input.GetKeyDown(keys.BACK))
+        if(Input.GetKeyDown(keys.BACK))
             activeKeys[keys.BACK][inputEvt.DOWN] = true;
         else
             activeKeys[keys.BACK][inputEvt.DOWN] = false;
-        if (Input.GetKey(keys.BACK))
+        if(Input.GetKey(keys.BACK))
             activeKeys[keys.BACK][inputEvt.PRESSED] = true;
         else
             activeKeys[keys.BACK][inputEvt.PRESSED] = false;
-        if (Input.GetKeyUp(keys.BACK))
+        if(Input.GetKeyUp(keys.BACK))
             activeKeys[keys.BACK][inputEvt.UP] = true;
         else
             activeKeys[keys.BACK][inputEvt.UP] = false;
@@ -175,43 +175,43 @@ public class InputController {
 
     public Dictionary<int, Dictionary<inputEvt, bool>> getActiveButtons() {
         /* LEFTSHOOT */
-        if (Input.GetMouseButtonDown(buttons.LEFTSHOOT))
+        if(Input.GetMouseButtonDown(buttons.LEFTSHOOT))
             activeButtons[buttons.LEFTSHOOT][inputEvt.DOWN] = true;
         else
             activeButtons[buttons.LEFTSHOOT][inputEvt.DOWN] = false;
-        if (Input.GetMouseButton(buttons.LEFTSHOOT))
+        if(Input.GetMouseButton(buttons.LEFTSHOOT))
             activeButtons[buttons.LEFTSHOOT][inputEvt.PRESSED] = true;
         else
             activeButtons[buttons.LEFTSHOOT][inputEvt.PRESSED] = false;
-        if (Input.GetMouseButtonUp(buttons.LEFTSHOOT))
+        if(Input.GetMouseButtonUp(buttons.LEFTSHOOT))
             activeButtons[buttons.LEFTSHOOT][inputEvt.UP] = true;
         else
             activeButtons[buttons.LEFTSHOOT][inputEvt.UP] = false;
 
         /* RIGHTSHOOT */
-        if (Input.GetMouseButtonDown(buttons.RIGHTSHOOT))
+        if(Input.GetMouseButtonDown(buttons.RIGHTSHOOT))
             activeButtons[buttons.RIGHTSHOOT][inputEvt.DOWN] = true;
         else
             activeButtons[buttons.RIGHTSHOOT][inputEvt.DOWN] = false;
-        if (Input.GetMouseButton(buttons.RIGHTSHOOT))
+        if(Input.GetMouseButton(buttons.RIGHTSHOOT))
             activeButtons[buttons.RIGHTSHOOT][inputEvt.PRESSED] = true;
         else
             activeButtons[buttons.RIGHTSHOOT][inputEvt.PRESSED] = false;
-        if (Input.GetMouseButtonUp(buttons.RIGHTSHOOT))
+        if(Input.GetMouseButtonUp(buttons.RIGHTSHOOT))
             activeButtons[buttons.RIGHTSHOOT][inputEvt.UP] = true;
         else
             activeButtons[buttons.RIGHTSHOOT][inputEvt.UP] = false;
 
         /* RELOAD */
-        if (Input.GetMouseButtonDown(buttons.RELOAD))
+        if(Input.GetMouseButtonDown(buttons.RELOAD))
             activeButtons[buttons.RELOAD][inputEvt.DOWN] = true;
         else
             activeButtons[buttons.RELOAD][inputEvt.DOWN] = false;
-        if (Input.GetMouseButton(buttons.RELOAD))
+        if(Input.GetMouseButton(buttons.RELOAD))
             activeButtons[buttons.RELOAD][inputEvt.PRESSED] = true;
         else
             activeButtons[buttons.RELOAD][inputEvt.PRESSED] = false;
-        if (Input.GetMouseButtonUp(buttons.RELOAD))
+        if(Input.GetMouseButtonUp(buttons.RELOAD))
             activeButtons[buttons.RELOAD][inputEvt.UP] = true;
         else
             activeButtons[buttons.RELOAD][inputEvt.UP] = false;

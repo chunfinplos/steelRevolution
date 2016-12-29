@@ -3,11 +3,31 @@ using System.Collections;
 
 public class GameMgr {
 
+    #region CLASSES
+
+    public abstract class ProjectSpecificMgrs {
+
+        private GameMgr gameMgrRef;
+
+        public ProjectSpecificMgrs(GameMgr gameMgr) {
+            gameMgrRef = gameMgr;
+        }
+
+        protected void AddServerInGameMgr<T>() where T : Component {
+            gameMgrRef.AddServer<T>();
+        }
+
+        protected GameMgr GetGameMgr() { return gameMgrRef; }
+    }
+
+    #endregion
+
     private static GameMgr instance = null;
 
     private GameObject servers = null;
-
     public SpawnerMgr spawnerMgr { get; private set; }
+    private ProjectSpecificMgrs customMgrs = null;
+
 
     public static GameMgr GetInstance() {
         if(instance == null) {
@@ -52,6 +72,19 @@ public class GameMgr {
             return servers.GetComponent<T>();
         else
             return null;
+    }
+
+    #endregion
+
+    #region CUSTOM MANAGERS
+
+    public bool IsCustomMgrInit() {
+        return customMgrs != null;
+    }
+
+    public ProjectSpecificMgrs CustomMgr {
+        get { return customMgrs; }
+        set { customMgrs = value; }
     }
 
     #endregion
