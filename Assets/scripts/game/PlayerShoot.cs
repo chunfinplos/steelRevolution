@@ -12,6 +12,12 @@ public class PlayerShoot : AComponent {
     public Transform shootL;
     public Transform shootR;
 
+    public float timeBetweenShotsL = 0.5f;
+    public float timeBetweenShotsR = 1.0f;
+
+    private float timeSinceLastShotL = 0.0f;
+    private float timeSinceLastShotR = 0.0f;
+
     #region MAIN
 
     protected override void Awake() {
@@ -27,6 +33,8 @@ public class PlayerShoot : AComponent {
 
     protected override void Update() {
         base.Update();
+        timeSinceLastShotL += Time.deltaTime;
+        timeSinceLastShotR += Time.deltaTime;
     }
 
     //void FixedUpdate() {}
@@ -41,38 +49,37 @@ public class PlayerShoot : AComponent {
     public void button(int mCode, Dictionary<inputEvt, bool> buttonData) {
         if(buttonData[inputEvt.DOWN]) {
             if(mCode == inputMgr.inputCtrl.buttons.LEFTSHOOT) {
-                Shoot(true);
+                ShootL();
             } else if(mCode == inputMgr.inputCtrl.buttons.RIGHTSHOOT) {
-                Shoot(false);
+                ShootR();
             } else {
 
             }
         }
-
-        //string[] s = new string[] { "", "", "" };
-        //if(buttonData[inputEvt.DOWN])
-        //    s[0] = "DOWN";
-        //if(buttonData[inputEvt.PRESSED])
-        //    s[1] = "PRESSED";
-        //if(buttonData[inputEvt.UP])
-        //    s[2] = "UP";
-        //Debug.Log(mCode + ": " + s[0] + " _ " + s[1] + " _ " + s[2]);
     }
 
-    private void Shoot(bool isLeft) {
-        //Vector3 targetPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 sourcePoint;
-        Quaternion sourceQ;
-        GameObject prefab;
-        if(isLeft) {
-            sourcePoint = shootL.position;
-            sourceQ = shootL.rotation;
-            prefab = prefabL;
+    private void ShootL() {
+        //Debug.Log(timeSinceLastShotL + " >= " + timeBetweenShotsL);
+        if(timeSinceLastShotL >= timeBetweenShotsL) {
+            GameObject bullet = createProyectil(prefabL, shootL.position, shootL.rotation);
+            bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
+            timeSinceLastShotL = 0.0f;
         } else {
-            sourcePoint = shootR.position;
-            sourceQ = shootR.rotation;
-            prefab = prefabR;
+            Debug.Log("can't shoot L");
         }
+    }
+
+    private void ShootR() {
+        if(timeSinceLastShotR >= timeBetweenShotsR) {
+            GameObject bullet = createProyectil(prefabR, shootR.position, shootR.rotation);
+            bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
+            timeSinceLastShotR = 0.0f;
+        } else {
+            Debug.Log("can't shoot R");
+        }
+    }
+
+    private GameObject createProyectil(GameObject prefab, Vector3 sourcePoint, Quaternion sourceQ) {
         sourceQ *= Quaternion.Euler(Vector3.right * 90);
         sourceQ *= Quaternion.Euler(Vector3.up * 45);
         GameObject bullet = GameMgr.GetInstance().spawnerMgr.
@@ -81,9 +88,6 @@ public class PlayerShoot : AComponent {
         Physics.IgnoreCollision(bullet.GetComponent<CapsuleCollider>(),
             GameMgrExtension.GetCustomMgrs().gamePlayMgr.player.GetComponent<CapsuleCollider>());
 
-        //bullet.transform.LookAt(targetPoint);
-        //bullet.GetComponent<Rigidbody>().AddForce(sourcePoint * bulletSpeed);
-
-        bullet.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletSpeed);
+        return bullet;
     }
 }
