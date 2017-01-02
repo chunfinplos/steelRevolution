@@ -35,7 +35,6 @@ public class DestroyCollision : AComponent {
             //particleSys.Clear();
             //particleSys.Play();
             particleSys.Emit(100);
-            Destroy(explosion, particleSys.duration);
         }
         GameMgr.GetInstance().spawnerMgr.DestroyGameObject(gameObject);
     }
