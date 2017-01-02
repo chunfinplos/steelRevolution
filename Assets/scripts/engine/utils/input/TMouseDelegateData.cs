@@ -23,7 +23,6 @@ public class TMouseDelegateData {
         } else {
             mouseDelegateMap.Add(mCode, mDel);
         }
-        mouseDelegateMap[mCode] += mDel;
         n++;
     }
 
